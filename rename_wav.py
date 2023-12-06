@@ -32,19 +32,58 @@ def main():
     wav_renamed = zipfile.ZipFile(os.path.join(work_dir, 'wav_renamed.zip'),
                                   'w', compression=zipfile.ZIP_STORED)
     counter = 1
-    for part, part_dict in ddi.items():
-        for name, name_list in part_dict.items():
+    part='vqm'
+    for i, name_dict in enumerate(ddi['vqm']):  
+                    name='vqm'
+                    name = name.replace('\\', '%5c')  
+                    print(f'{counter:5d}  {part}/{name}_{i}')  
+                    fname: str = name_dict['snd'].split('=')[1]  
+                    if f'wav/{fname}.wav' in wav.namelist():  
+                        wav_renamed.writestr(f'{part}/{name}_{i}.wav', wav.read(f'wav/{fname}.wav'))  
+                    else:  
+                        print(f'Warning: File {fname}.wav not found in zip archive.')
+                    counter += 1 
+    
+    part='sta'
+    for name, name_list in ddi['sta'].items():
+                for i, name_dict in enumerate(name_list):
+                    name = name.replace('\\', '%5c')
+                    print(f'{counter:5d}  {part}/{name}_{i}')
+                    fname: str = name_dict['snd'].split('=')[1]  
+                    if f'wav/{fname}.wav' in wav.namelist():  
+                            wav_renamed.writestr(f'{part}/{name}_{i}.wav', wav.read(f'wav/{fname}.wav'))  
+                    else:  
+                            print(f'Warning: File {fname}.wav not found in zip archive.')
+                    counter += 1
+
+    part='art'
+    for name, name_list in ddi['art'].items():
             for i, name_dict in enumerate(name_list):
                 name = name.replace('\\', '%5c')
                 print(f'{counter:5d}  {part}/{name}_{i}')
-                fname: str = name_dict['snd']
-                wav_renamed.writestr(f'{part}/{name}_{i}.wav',
-                                     wav.read(f'wav/{fname}.wav'))
+                fname: str = name_dict['snd'].split('=')[1]  
+                if f'wav/{fname}.wav' in wav.namelist():  
+                        wav_renamed.writestr(f'{part}/{name}_{i}.wav', wav.read(f'wav/{fname}.wav'))  
+                else:  
+                        print(f'Warning: File {fname}.wav not found in zip archive.')
                 counter += 1
 
     wav_renamed.close()
     wav.close()
 
-
 if __name__ == '__main__':
     main()
+"""
+    for part, part_dict in ddi.items():
+        for name, name_list in part_dict.items():
+            for i, name_dict in enumerate(name_list):
+                name = name.replace('\\', '%5c')
+                print(f'{counter:5d}  {part}/{name}_{i}')
+                fname: str = name_dict.get('snd')
+                if f'wav/{fname}.wav' in wav.namelist():  
+                    wav_renamed.writestr(f'{part}/{name}_{i}.wav', wav.read(f'wav/{fname}.wav'))  
+                else:  
+                    print(f'Warning: File {fname}.wav not found in zip archive.')
+                counter += 1
+"""
+
